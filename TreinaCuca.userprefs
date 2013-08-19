@@ -1,12 +1,9 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Card.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\ControlCard.cs">
     <Files>
-      <File FileName="Assets\iTween\Sample\RotateSample.cs" Line="7" Column="3" />
-      <File FileName="Assets\Scripts\menu.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\creditos.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\ControlCard.cs" Line="19" Column="43" />
-      <File FileName="Assets\Scripts\Card.cs" Line="48" Column="22" />
+      <File FileName="Assets\Scripts\Card.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\ControlCard.cs" Line="80" Column="8" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

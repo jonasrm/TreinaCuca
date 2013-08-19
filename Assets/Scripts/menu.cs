@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class menu : MonoBehaviour {
+public class Menu : MonoBehaviour {
 	
 	#region Fields
 	

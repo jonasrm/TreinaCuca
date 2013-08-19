@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class creditos : MonoBehaviour {
+public class Creditos : MonoBehaviour {
 	
 	#region Fields
 	

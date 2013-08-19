@@ -46,8 +46,8 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\Card.cs" />
      <Compile Include="Assets\Scripts\ControlCard.cs" />
-     <Compile Include="Assets\Scripts\creditos.cs" />
-     <Compile Include="Assets\Scripts\menu.cs" />
+     <Compile Include="Assets\Scripts\Creditos.cs" />
+     <Compile Include="Assets\Scripts\Menu.cs" />
      <Compile Include="Assets\iTween\Plugins\iTween.cs" />
      <Compile Include="Assets\iTween\Sample\MoveSample.cs" />
      <Compile Include="Assets\iTween\Sample\RotateSample.cs" />
