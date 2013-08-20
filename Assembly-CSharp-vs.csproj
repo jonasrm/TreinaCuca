@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\Card.cs" />
+     <Compile Include="Assets\Scripts\CardMove.cs" />
      <Compile Include="Assets\Scripts\ControlCard.cs" />
      <Compile Include="Assets\Scripts\Creditos.cs" />
      <Compile Include="Assets\Scripts\Menu.cs" />

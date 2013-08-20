@@ -7,8 +7,8 @@ public class ControlCard : MonoBehaviour
 	
 	private int flippedCards = 0;
 	private GameObject card1, card2;
-	private bool clickable = true;
-	private float timer = 1.1f;
+	//private bool clickable = true;
+	//private float timer = 1.1f;
 	
 	#endregion
 	
@@ -18,6 +18,32 @@ public class ControlCard : MonoBehaviour
 	{
 		GUI.Label(new Rect(10, 10, 200, 50), "FP: " + flippedCards);	
 	}
+	
+	public void cardFlip(GameObject card)
+	{
+		if (flippedCards == 0)
+		{
+			flippedCards++;
+			card1 = card;
+		}
+		else if (flippedCards == 1)
+		{
+			card2 = card;
+			if (card.GetComponent<CardMove>().flipCard == CardMove.FlipCard.FRONT)
+			{
+				flippedCards++;
+			}
+			else
+			{
+				flippedCards--;
+			}
+		}
+	}
+	
+	#endregion	
+	
+	/*
+	
 	
 	void Update ()
 	{
@@ -124,5 +150,5 @@ public class ControlCard : MonoBehaviour
 		flippedCards = 0;
 	}
 	
-	#endregion
+	*/
 }
