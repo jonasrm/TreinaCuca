@@ -1,27 +1,28 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+public enum FlipCard { FRONT, BACK }
+public enum StateCard { FLIP, DRAG_AND_DROP, BLOCK }
+
 public class CardMove : MonoBehaviour
 {
-	
 	#region Fields
-	
-	//Vector3 mMouseDownPos;
-	//Vector3 mMouseUpPos; 
-	//public float speed = .1f;
-	
+		
 	public GameObject control;
-	
-	public enum FlipCard { FRONT, BACK }
 	public FlipCard flipCard = FlipCard.BACK;
-	
-	public enum StateCard { FLIP, DRAG_AND_DROP, BLOCK }
+
 	public StateCard stateCard = StateCard.FLIP;
 
 	private Vector3 screenPoint;
     private Vector3 offset;
 	private bool overDeck = false;
-	private GameObject deck;
+	//private GameObject deck;
+	
+	private Vector3 startPosition;
+	private Material originalMaterial;
+	
+	//public GameObject effectDrag;
+	//private GameObject e;
 	
 	#endregion
 	
@@ -29,7 +30,9 @@ public class CardMove : MonoBehaviour
 
 	void Start ()
 	{
-
+		startPosition = transform.position;
+		originalMaterial = renderer.material;
+		
 	}
 	
 	void Update()
@@ -39,17 +42,18 @@ public class CardMove : MonoBehaviour
 	
 	void OnMouseDown() 
 	{
-		
-		if (ControlCard.inGame) {
-			
-			if (stateCard == StateCard.FLIP)
+		if (ControlCard.flippedCards < 2) 
+		{
+			if (stateCard == StateCard.FLIP && flipCard == FlipCard.BACK)
 			{
 				flipping();
 			}
 			else if (stateCard == StateCard.DRAG_AND_DROP)
 			{
 				screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
-				offset = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z)); 				
+				offset = transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z));
+				//e = (GameObject)Instantiate(effectDrag, transform.position, Quaternion.identity);
+				//e.transform.parent = transform;
 			}
 			
 		}
@@ -67,20 +71,38 @@ public class CardMove : MonoBehaviour
 	
 	void OnMouseUp() 
 	{
-		if (overDeck)
+		if (stateCard == StateCard.DRAG_AND_DROP)
 		{
-			deck.renderer.material.color = Color.red;
-			Destroy(gameObject);
+			if (overDeck)
+			{
+				//deck.renderer.material = originalMaterial;
+				Destroy(gameObject);
+			}
+			else
+			{
+				moveTo(startPosition);
+			}
 		}
 	}
 	
 	public void flipping()
 	{
-		//stateCard = StateCard.BLOCK;
-		ControlCard.inGame = false;
-		if (flipCard == FlipCard.BACK) {
+		stateCard = StateCard.BLOCK;
+		
+		if (flipCard == FlipCard.BACK)
+		{
+			ControlCard.flippedCards++;
 			flipCard = FlipCard.FRONT;
-			iTween.RotateBy(gameObject, iTween.Hash("y", .5, "easeType", "easeInOutBack", "onComplete", "setStateCardFlip"));
+			if (ControlCard.flippedCards == 1)
+			{
+				ControlCard.card1 = gameObject;
+				iTween.RotateBy(gameObject, iTween.Hash("y", .5, "easeType", "easeInOutBack"));
+			}
+			else if (ControlCard.flippedCards == 2)
+			{
+				ControlCard.card2 = gameObject;
+				iTween.RotateBy(gameObject, iTween.Hash("y", .5, "easeType", "easeInOutBack", "onComplete", "setStateCardFlip"));
+			}
 		}
 		else
 		{
@@ -92,39 +114,50 @@ public class CardMove : MonoBehaviour
 	public void moveFrom(Vector3 pos)
 	{
 		float x, y;
-		ControlCard.inGame = false;
 		x = transform.position.x - pos.x;
 		y = pos.y - transform.position.y;
 		iTween.MoveBy(gameObject, iTween.Hash("x", x, "y", y, "easeType", "easeInOutExpo", "delay", .1, "onComplete", "selfDestruction"));	
-		//iTween.RotateBy(gameObject, iTween.Hash("x", 1, "easeType", "easeInOutBack", "delay", .1));
-		//stateCard = StateCard.DRAG_AND_DROP;
+	}
+	
+	public void moveTo(Vector3 pos)
+	{
+		float x, y;
+		x = transform.position.x - pos.x;
+		y = pos.y - transform.position.y;
+		iTween.MoveBy(gameObject, iTween.Hash("x", x, "y", y, "easeType", "easeInOutExpo", "delay", .1));
 	}
 	
 	void selfDestruction()
 	{
+		ControlCard.flippedCards = 0;
 		Destroy(gameObject);
-		ControlCard.inGame = true;
 	}
 	
 	void setStateCardFlip()
 	{
-		//stateCard = StateCard.FLIP;
-		ControlCard.inGame = true;
-		ControlCard.cardFlip(gameObject);
+		stateCard = StateCard.FLIP;
+		ControlCard.cardFlip();
 	}
 
 	void setStateCardDragDrod()
 	{
 		stateCard = StateCard.DRAG_AND_DROP;
 	}
-
+	
+	#endregion
+	
+	#region Deck
+	
 	void OnTriggerStay(Collider collider)
 	{
 		if (collider.tag == "deck")
 		{
-			deck = collider.gameObject;
-			deck.renderer.material.color = Color.grey;
-			overDeck = true;
+			if (renderer.material.color == collider.renderer.material.color)
+			{
+				//deck = collider.gameObject;
+				//deck.renderer.material.color = Color.red;
+				overDeck = true;
+			}
 		}
 	}
 	
@@ -133,7 +166,7 @@ public class CardMove : MonoBehaviour
 		if (collider.tag == "deck")
 		{
 			overDeck = false;
-			deck.renderer.material.color = Color.red;
+			//deck.renderer.material = originalMaterial;
 		}
 	}
 	

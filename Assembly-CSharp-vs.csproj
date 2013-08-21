@@ -44,7 +44,6 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Scripts\Card.cs" />
      <Compile Include="Assets\Scripts\CardMove.cs" />
      <Compile Include="Assets\Scripts\ControlCard.cs" />
      <Compile Include="Assets\Scripts\Creditos.cs" />
@@ -53,7 +52,11 @@
      <Compile Include="Assets\iTween\Sample\MoveSample.cs" />
      <Compile Include="Assets\iTween\Sample\RotateSample.cs" />
      <Compile Include="Assets\iTween\Sample\SampleInfo.cs" />
+     <None Include="Assets\Standard Assets\Particles\Sources\Shaders\Particle Alpha Blend (Queue +100).shader" />
      <None Include="Assets\iTween\ReadMe!\ReadMe!.txt" />
+ <Reference Include="Assembly-UnityScript-firstpass">
+ <HintPath>Library\ScriptAssemblies\Assembly-UnityScript-firstpass.dll</HintPath>
+ </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

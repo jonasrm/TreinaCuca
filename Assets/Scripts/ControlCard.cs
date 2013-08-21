@@ -1,17 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+public enum StateGame { FREE, WAIT }
+
 public class ControlCard : MonoBehaviour
 {
 	#region Fields
 	
+	public static StateGame gameState = StateGame.FREE;
+	private const float START_TIMER = 1f;
+	private static float timer;
+	
 	public GameObject[] prefab;
-	public static bool inGame = true;
-	private static int flippedCards = 0;
-	private static GameObject card1, card2;
+	public static int flippedCards = 0;
+	public static GameObject card1, card2;
 	private int[] rdn = new int[] {0,0,0,0,0,0};
-	//private bool clickable = true;
-	//private float timer = 1.1f;
 	
 	#endregion
 	
@@ -24,6 +27,8 @@ public class ControlCard : MonoBehaviour
 	
 	void Start()
 	{
+		timer = START_TIMER;
+		
 		float marginLeft = -4.2f, index = 1.2f, y1 = .2f, y2 = -1.4f;
 
 		Instantiate(prefab[randomCards()], new Vector3(marginLeft + index, y1, 0f), Quaternion.identity);
@@ -39,6 +44,17 @@ public class ControlCard : MonoBehaviour
 		Instantiate(prefab[randomCards()], new Vector3(marginLeft + index * 4, y2, 0f), Quaternion.identity);
 		Instantiate(prefab[randomCards()], new Vector3(marginLeft + index * 5, y2, 0f), Quaternion.identity);
 		Instantiate(prefab[randomCards()], new Vector3(marginLeft + index * 6, y2, 0f), Quaternion.identity);
+		
+		
+		y1 = 2.5f;
+		GameObject prefabDeck = (GameObject)Resources.Load("Deck");
+		Object[] materialsDeck = Resources.LoadAll("Materials", typeof(Material));
+		Debug.Log(materialsDeck.Length);
+		for (int i = 1; i < 7; i++) {
+			GameObject newDeck = (GameObject)Instantiate(prefabDeck, new Vector3(marginLeft + index * i, y1, 0f), Quaternion.identity);	
+			newDeck.name = "Deck" + i;
+			newDeck.renderer.material = (Material)materialsDeck[i - 1];
+		}
 	}
 	
 	void Update()
@@ -47,43 +63,34 @@ public class ControlCard : MonoBehaviour
 		{
 			Application.LoadLevel("Menu");
 		}
+		
+		if (gameState == StateGame.WAIT)
+		{
+			timer -= Time.deltaTime;
+			if (timer <= 0f)
+			{
+				gameState = StateGame.FREE;
+				flippedCards = 0;
+				timer = START_TIMER;
+			}
+		}
 	}
 	
-	public static void cardFlip(GameObject card)
+	public static void cardFlip()
 	{
-		if (flippedCards == 0)
+		if (flippedCards == 2)
 		{
-			flippedCards++;
-			card1 = card;
-		}
-		else if (flippedCards == 1)
-		{
-			if (card.GetComponent<CardMove>().flipCard == CardMove.FlipCard.FRONT)
+			gameState = StateGame.WAIT;
+			
+			if ( card1.name == card2.name )
 			{
-				flippedCards++;
-				card2 = card;
-				//inGame = false;
-				if ( card1.name == card2.name )
-				{
-					//TODO - move
-					card1.GetComponent<CardMove>().moveFrom(card2.transform.position);
-					card2.GetComponent<CardMove>().stateCard = CardMove.StateCard.DRAG_AND_DROP;
-					flippedCards = 0;
-					//inGame = true;
-				}
-				else
-				{
-					card1.GetComponent<CardMove>().flipping();
-					card2.GetComponent<CardMove>().flipping();
-					flippedCards = 0;
-					//inGame = true;
-				}
+				card1.GetComponent<CardMove>().moveFrom(card2.transform.position);
+				card2.GetComponent<CardMove>().stateCard = StateCard.DRAG_AND_DROP;
 			}
 			else
 			{
-				flippedCards--;
-				card1 = null;
-				//inGame = true;
+				card1.GetComponent<CardMove>().flipping();
+				card2.GetComponent<CardMove>().flipping();
 			}
 		}
 	}

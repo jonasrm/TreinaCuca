@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 
 Project("{04368458-410B-B7CD-CDA6-A4EC3729F44A}") = "TreinaCuca", "Assembly-CSharp.csproj", "{44A1C01F-8825-CF01-92DC-51656B9D3DF5}"
 EndProject
+Project("{04368458-410B-B7CD-CDA6-A4EC3729F44A}") = "TreinaCuca", "Assembly-UnityScript-firstpass.unityproj", "{78AD7AE5-C682-ABD0-EB22-7FE410BC10D5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,11 +15,15 @@ Global
 		{44A1C01F-8825-CF01-92DC-51656B9D3DF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44A1C01F-8825-CF01-92DC-51656B9D3DF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{44A1C01F-8825-CF01-92DC-51656B9D3DF5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78AD7AE5-C682-ABD0-EB22-7FE410BC10D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78AD7AE5-C682-ABD0-EB22-7FE410BC10D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78AD7AE5-C682-ABD0-EB22-7FE410BC10D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78AD7AE5-C682-ABD0-EB22-7FE410BC10D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-																																				GlobalSection(MonoDevelopProperties) = preSolution
+																																										GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Assembly-CSharp.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1
