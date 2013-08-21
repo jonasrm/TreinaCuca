@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TreinaCuca", "TreinaCuca\TreinaCuca.csproj", "{123C50A2-90F1-4D41-9E8B-10F6E3A773EF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM = Debug|ARM
+		Master|ARM = Master|ARM
+		Release|ARM = Release|ARM
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{123C50A2-90F1-4D41-9E8B-10F6E3A773EF}.Debug|ARM.ActiveCfg = Debug|ARM
+		{123C50A2-90F1-4D41-9E8B-10F6E3A773EF}.Debug|ARM.Build.0 = Debug|ARM
+		{123C50A2-90F1-4D41-9E8B-10F6E3A773EF}.Debug|ARM.Deploy.0 = Debug|ARM
+		{123C50A2-90F1-4D41-9E8B-10F6E3A773EF}.Master|ARM.ActiveCfg = Master|ARM
+		{123C50A2-90F1-4D41-9E8B-10F6E3A773EF}.Master|ARM.Build.0 = Master|ARM
+		{123C50A2-90F1-4D41-9E8B-10F6E3A773EF}.Master|ARM.Deploy.0 = Master|ARM
+		{123C50A2-90F1-4D41-9E8B-10F6E3A773EF}.Release|ARM.ActiveCfg = Release|ARM
+		{123C50A2-90F1-4D41-9E8B-10F6E3A773EF}.Release|ARM.Build.0 = Release|ARM
+		{123C50A2-90F1-4D41-9E8B-10F6E3A773EF}.Release|ARM.Deploy.0 = Release|ARM
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

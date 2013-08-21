@@ -25,16 +25,25 @@ public class Menu : MonoBehaviour {
 		GUI.Box(new Rect(posicaoX-250, 50, 500, 100), "Treina Cuca");
 		if(GUI.Button(new Rect(posicaoX-100, posicaoY-20, 200, 40), "Jogar")){
 			audio.PlayOneShot(sound);
+			Application.LoadLevel("PlayGame");
 		}
 		if(GUI.Button(new Rect(posicaoX-100, posicaoY+30, 200, 40), "Tutorial")){
 			audio.PlayOneShot(sound);
 		}
 		if(GUI.Button(new Rect(posicaoX-100, posicaoY+80, 200, 40), "Creditos")) {
 			audio.PlayOneShot(sound);
-			Application.LoadLevel("creditos");
+			Application.LoadLevel("Creditos");
 		}
 		if(GUI.Button(new Rect(posicaoX-100, posicaoY+130, 200, 40), "Sair")) {
 			audio.PlayOneShot(sound);
+			Application.Quit();
+		}
+	}
+	
+	void Update()
+	{
+		if (Input.GetKeyDown(KeyCode.Escape))
+		{
 			Application.Quit();
 		}
 	}
