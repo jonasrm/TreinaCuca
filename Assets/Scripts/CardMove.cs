@@ -16,14 +16,12 @@ public class CardMove : MonoBehaviour
 	private Vector3 screenPoint;
     private Vector3 offset;
 	private bool overDeck = false;
-	//private GameObject deck;
 	
 	private Vector3 startPosition;
-	private Material originalMaterial;
-	
-	//public GameObject effectDrag;
-	//private GameObject e;
-	
+	private float upEffect = 2f;
+	private float timeUpEffect = 1f;
+	private float timeRotate = 1f;
+		
 	#endregion
 	
 	#region Methods
@@ -31,7 +29,6 @@ public class CardMove : MonoBehaviour
 	void Start ()
 	{
 		startPosition = transform.position;
-		originalMaterial = renderer.material;
 		
 	}
 	
@@ -52,8 +49,6 @@ public class CardMove : MonoBehaviour
 			{
 				screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
 				offset = transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z));
-				//e = (GameObject)Instantiate(effectDrag, transform.position, Quaternion.identity);
-				//e.transform.parent = transform;
 			}
 			
 		}
@@ -63,7 +58,7 @@ public class CardMove : MonoBehaviour
 	{
 		if (stateCard == StateCard.DRAG_AND_DROP)
 		{
-			Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z);
+			Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z-upEffect);
 			Vector3 curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint) + offset;
 			transform.position = curPosition;
 		}
@@ -75,7 +70,6 @@ public class CardMove : MonoBehaviour
 		{
 			if (overDeck)
 			{
-				//deck.renderer.material = originalMaterial;
 				Destroy(gameObject);
 			}
 			else
@@ -96,27 +90,34 @@ public class CardMove : MonoBehaviour
 			if (ControlCard.flippedCards == 1)
 			{
 				ControlCard.card1 = gameObject;
-				iTween.RotateBy(gameObject, iTween.Hash("y", .5, "easeType", "easeInOutBack"));
+				iTween.MoveBy(gameObject, iTween.Hash("z", -upEffect, "time", timeUpEffect));
+				iTween.RotateBy(gameObject, iTween.Hash("y", .5, "time", timeRotate, "easeType", "easeInOutBack", "delay", timeUpEffect));
 			}
 			else if (ControlCard.flippedCards == 2)
 			{
 				ControlCard.card2 = gameObject;
-				iTween.RotateBy(gameObject, iTween.Hash("y", .5, "easeType", "easeInOutBack", "onComplete", "setStateCardFlip"));
+				iTween.MoveBy(gameObject, iTween.Hash("z", -upEffect, "time", timeUpEffect));
+				iTween.RotateBy(gameObject, iTween.Hash("y", .5, "time", timeRotate, "easeType", "easeInOutBack", "delay", timeUpEffect, "onComplete", "setStateCardFlip"));
 			}
 		}
 		else
 		{
 			flipCard = FlipCard.BACK;
-			iTween.RotateBy(gameObject, iTween.Hash("y", -.5, "easeType", "easeInOutBack", "onComplete", "setStateCardFlip"));
+			iTween.MoveBy(gameObject, iTween.Hash("z", -upEffect, "time", timeUpEffect));
+			iTween.RotateBy(gameObject, iTween.Hash("y", -.5, "time", timeRotate/2, "easeType", "easeInOutBack", "delay", timeUpEffect, "onComplete", "setStateCardFlip"));
+			iTween.ShakePosition(gameObject, iTween.Hash("y", .1f, "x", .1f, "z", .1f, "time", .1f, "delay", timeUpEffect));
 		}
 	}
 	
-	public void moveFrom(Vector3 pos)
+	public void moveFrom(GameObject c)
 	{
 		float x, y;
-		x = transform.position.x - pos.x;
-		y = pos.y - transform.position.y;
-		iTween.MoveBy(gameObject, iTween.Hash("x", x, "y", y, "easeType", "easeInOutExpo", "delay", .1, "onComplete", "selfDestruction"));	
+		x = transform.position.x - c.transform.position.x;
+		y = c.transform.position.y - transform.position.y;
+		iTween.MoveBy(c, iTween.Hash("z", -upEffect, "time", timeUpEffect));
+		iTween.MoveBy(gameObject, iTween.Hash("z", -upEffect, "time", timeUpEffect));
+		iTween.MoveBy(gameObject, iTween.Hash("x", x, "y", y, "easeType", "easeInOutExpo", "delay", timeUpEffect, "onComplete", "selfDestruction"));	
+		iTween.ShakePosition(Camera.main.gameObject, iTween.Hash("y", .1f, "x", .1f, "z", .1f, "time", .5f, "delay", timeUpEffect*2));
 	}
 	
 	public void moveTo(Vector3 pos)
@@ -124,7 +125,7 @@ public class CardMove : MonoBehaviour
 		float x, y;
 		x = transform.position.x - pos.x;
 		y = pos.y - transform.position.y;
-		iTween.MoveBy(gameObject, iTween.Hash("x", x, "y", y, "easeType", "easeInOutExpo", "delay", .1));
+		iTween.MoveBy(gameObject, iTween.Hash("x", x, "y", y, "z", -upEffect, "easeType", "easeInOutExpo", "delay", .1));
 	}
 	
 	void selfDestruction()
@@ -154,8 +155,6 @@ public class CardMove : MonoBehaviour
 		{
 			if (renderer.material.color == collider.renderer.material.color)
 			{
-				//deck = collider.gameObject;
-				//deck.renderer.material.color = Color.red;
 				overDeck = true;
 			}
 		}
@@ -166,7 +165,6 @@ public class CardMove : MonoBehaviour
 		if (collider.tag == "deck")
 		{
 			overDeck = false;
-			//deck.renderer.material = originalMaterial;
 		}
 	}
 	

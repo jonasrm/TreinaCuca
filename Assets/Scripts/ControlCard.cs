@@ -29,29 +29,17 @@ public class ControlCard : MonoBehaviour
 	{
 		timer = START_TIMER;
 		
-		float marginLeft = -4.2f, index = 1.2f, y1 = .2f, y2 = -1.4f;
+		float marginLeft = -4.2f, index = 1.2f, y;
 
-		Instantiate(prefab[randomCards()], new Vector3(marginLeft + index, y1, 0f), Quaternion.identity);
-		Instantiate(prefab[randomCards()], new Vector3(marginLeft + index * 2, y1, 0f), Quaternion.identity);
-		Instantiate(prefab[randomCards()], new Vector3(marginLeft + index * 3, y1, 0f), Quaternion.identity);
-		Instantiate(prefab[randomCards()], new Vector3(marginLeft + index * 4, y1, 0f), Quaternion.identity);
-		Instantiate(prefab[randomCards()], new Vector3(marginLeft + index * 5, y1, 0f), Quaternion.identity);
-		Instantiate(prefab[randomCards()], new Vector3(marginLeft + index * 6, y1, 0f), Quaternion.identity);
-		//
-		Instantiate(prefab[randomCards()], new Vector3(marginLeft + index, y2, 0f), Quaternion.identity);
-		Instantiate(prefab[randomCards()], new Vector3(marginLeft + index * 2, y2, 0f), Quaternion.identity);
-		Instantiate(prefab[randomCards()], new Vector3(marginLeft + index * 3, y2, 0f), Quaternion.identity);
-		Instantiate(prefab[randomCards()], new Vector3(marginLeft + index * 4, y2, 0f), Quaternion.identity);
-		Instantiate(prefab[randomCards()], new Vector3(marginLeft + index * 5, y2, 0f), Quaternion.identity);
-		Instantiate(prefab[randomCards()], new Vector3(marginLeft + index * 6, y2, 0f), Quaternion.identity);
-		
-		
-		y1 = 2.5f;
 		GameObject prefabDeck = (GameObject)Resources.Load("Deck");
 		Object[] materialsDeck = Resources.LoadAll("Materials", typeof(Material));
-		Debug.Log(materialsDeck.Length);
 		for (int i = 1; i < 7; i++) {
-			GameObject newDeck = (GameObject)Instantiate(prefabDeck, new Vector3(marginLeft + index * i, y1, 0f), Quaternion.identity);	
+			y = .2f;
+			Instantiate(prefab[randomCards()], new Vector3(marginLeft + index * i, y, 0f), Quaternion.identity);
+			y = -1.4f;
+			Instantiate(prefab[randomCards()], new Vector3(marginLeft + index * i, y, 0f), Quaternion.identity);
+			y = 2.5f;
+			GameObject newDeck = (GameObject)Instantiate(prefabDeck, new Vector3(marginLeft + index * i, y, 0f), Quaternion.identity);	
 			newDeck.name = "Deck" + i;
 			newDeck.renderer.material = (Material)materialsDeck[i - 1];
 		}
@@ -84,7 +72,7 @@ public class ControlCard : MonoBehaviour
 			
 			if ( card1.name == card2.name )
 			{
-				card1.GetComponent<CardMove>().moveFrom(card2.transform.position);
+				card1.GetComponent<CardMove>().moveFrom(card2);
 				card2.GetComponent<CardMove>().stateCard = StateCard.DRAG_AND_DROP;
 			}
 			else
