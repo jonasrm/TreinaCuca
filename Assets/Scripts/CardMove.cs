@@ -113,10 +113,10 @@ public class CardMove : MonoBehaviour
 	{
 		float x, y;
 		x = transform.position.x - c.transform.position.x;
-		y = c.transform.position.y - transform.position.y;
+		y = c.transform.position.y - transform.position.y;		
 		iTween.MoveBy(c, iTween.Hash("z", -upEffect, "time", timeUpEffect));
 		iTween.MoveBy(gameObject, iTween.Hash("z", -upEffect, "time", timeUpEffect));
-		iTween.MoveBy(gameObject, iTween.Hash("x", x, "y", y, "easeType", "easeInOutExpo", "delay", timeUpEffect, "onComplete", "selfDestruction"));	
+		iTween.MoveBy(gameObject, iTween.Hash("x", x, "y", y, "easeType", "easeInOutExpo", "delay", timeUpEffect, "onComplete", "selfDestruction"));
 		iTween.ShakePosition(Camera.main.gameObject, iTween.Hash("y", .1f, "x", .1f, "z", .1f, "time", .5f, "delay", timeUpEffect*2));
 	}
 	
@@ -153,7 +153,7 @@ public class CardMove : MonoBehaviour
 	{
 		if (collider.tag == "deck")
 		{
-			if (renderer.material.color == collider.renderer.material.color)
+			if (gameObject.name == collider.gameObject.name)
 			{
 				overDeck = true;
 			}

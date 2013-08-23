@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 public enum StateGame { FREE, WAIT }
 
@@ -11,7 +13,12 @@ public class ControlCard : MonoBehaviour
 	private const float START_TIMER = 1f;
 	private static float timer;
 	
-	public GameObject[] prefab;
+	public GameObject deckPrefab;
+	public GameObject cardPrefab;
+	public List<Material> materialsCardLine1;
+	public List<Material> materialsDeck;
+	
+	//public GameObject[] prefab;
 	public static int flippedCards = 0;
 	public static GameObject card1, card2;
 	private int[] rdn = new int[] {0,0,0,0,0,0};
@@ -28,22 +35,79 @@ public class ControlCard : MonoBehaviour
 	void Start()
 	{
 		timer = START_TIMER;
-		
 		float marginLeft = -4.2f, index = 1.2f, y;
 
-		GameObject prefabDeck = (GameObject)Resources.Load("Deck");
-		Object[] materialsDeck = Resources.LoadAll("Materials", typeof(Material));
-		for (int i = 1; i < 7; i++) {
-			y = .2f;
-			Instantiate(prefab[randomCards()], new Vector3(marginLeft + index * i, y, 0f), Quaternion.identity);
-			y = -1.4f;
-			Instantiate(prefab[randomCards()], new Vector3(marginLeft + index * i, y, 0f), Quaternion.identity);
-			y = 2.5f;
-			GameObject newDeck = (GameObject)Instantiate(prefabDeck, new Vector3(marginLeft + index * i, y, 0f), Quaternion.identity);	
-			newDeck.name = "Deck" + i;
-			newDeck.renderer.material = (Material)materialsDeck[i - 1];
+		Object[] auxMaterialsCard = Resources.LoadAll("CardMaterials", typeof(Material));
+		foreach (Material item in auxMaterialsCard) {
+			materialsCardLine1.Add(item);
+		}
+		Object[] auxMaterialsDeck = Resources.LoadAll("DeckMaterials", typeof(Material));
+		foreach (Material item in auxMaterialsDeck) {
+			materialsDeck.Add(item);	
+		}
+		
+		do 
+		{
+			int r = Random.Range(0, materialsCardLine1.Count);
+			materialsDeck.RemoveAt(r);
+			materialsCardLine1.RemoveAt(r);
+		} 
+		while (materialsCardLine1.Count > 6);
+		
+		// Copia das cartas da linha 1.
+		List<Material> materialsCardLine2 = materialsCardLine1;
+		
+		// SHUFFLE
+		materialsDeck = Shuffle(materialsDeck);
+		materialsCardLine1 = Shuffle(materialsCardLine1);
+		materialsCardLine2 = Shuffle(materialsCardLine2);
+		
+		// Posicionamento.
+		for (int i = 1; i < materialsCardLine1.Count + 1; i++) 
+		{
+			GameObject newCard = (GameObject)Instantiate(cardPrefab, new Vector3(marginLeft + index * i, .2f, 0f), Quaternion.identity);	
+			newCard.renderer.material = materialsCardLine1[i - 1];
+			newCard.name = materialsCardLine1[i - 1].name;
+		}
+		for (int i = 1; i < materialsCardLine2.Count + 1; i++) 
+		{
+			GameObject newCard = (GameObject)Instantiate(cardPrefab, new Vector3(marginLeft + index * i, -1.4f, 0f), Quaternion.identity);	
+			newCard.renderer.material = materialsCardLine2[i - 1];
+			newCard.name = materialsCardLine2[i - 1].name;
+		}
+		for (int i = 1; i < materialsDeck.Count + 1; i++) 
+		{
+			GameObject newDeck = (GameObject)Instantiate(deckPrefab, new Vector3(marginLeft + index * i, 2.5f, 0f), Quaternion.identity);	
+			newDeck.renderer.material = materialsDeck[i - 1];
+			newDeck.name = materialsDeck[i - 1].name;
 		}
 	}
+	
+	private System.Random _random = new System.Random();
+	public List<Material> Shuffle(List<Material> arr)
+    {
+		List<KeyValuePair<int, Material>> list = new List<KeyValuePair<int, Material>>();
+		
+		foreach (Material s in arr)
+		{
+		    list.Add(new KeyValuePair<int, Material>(_random.Next(), s));
+		}
+		
+		var sorted = from item in list
+			     	orderby item.Key
+			     	select item;
+		
+		Material[] result = new Material[arr.Count];
+		
+		int index = 0;
+		foreach (KeyValuePair<int, Material> pair in sorted)
+		{
+		    result[index] = pair.Value;
+		    index++;
+		}
+		
+		return result.ToList();
+    }
 	
 	void Update()
 	{
