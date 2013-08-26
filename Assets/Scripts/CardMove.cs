@@ -8,9 +8,9 @@ public class CardMove : MonoBehaviour
 {
 	#region Fields
 		
-	public GameObject control;
+	public AudioClip clip1;
+	
 	public FlipCard flipCard = FlipCard.BACK;
-
 	public StateCard stateCard = StateCard.FLIP;
 
 	private Vector3 screenPoint;
@@ -31,18 +31,14 @@ public class CardMove : MonoBehaviour
 		startPosition = transform.position;
 	}
 	
-	void Update()
-	{
-		//TODO
-	}
-	
 	void OnMouseDown() 
 	{
 		if (ControlCard.flippedCards < 2) 
 		{
 			if (stateCard == StateCard.FLIP && flipCard == FlipCard.BACK)
 			{
-				PlayFile("Sound/1");
+				//PlayFile("Sound/1");
+				audio.PlayOneShot(clip1);
 				flipping();
 			}
 			else if (stateCard == StateCard.DRAG_AND_DROP)
@@ -149,12 +145,12 @@ public class CardMove : MonoBehaviour
 	
 	#region Sound
 
-	public void PlayFile(string file) // file name without extension
-	{
-		AudioClip tmpClip;
-		tmpClip = (AudioClip)Resources.Load(file, typeof(AudioClip));
-		audio.PlayOneShot(tmpClip);
-	}
+	//public void PlayFile(string file) // file name without extension
+	//{
+		//AudioClip tmpClip;
+		//tmpClip = (AudioClip)Resources.Load(file, typeof(AudioClip));
+		//audio.PlayOneShot(tmpClip);
+	//}
 	
 	#endregion
 	

@@ -38,47 +38,47 @@ public class ControlCard : MonoBehaviour
 		float marginLeft = -4.2f, index = 1.2f;
 
 		Object[] auxMaterialsCard = Resources.LoadAll("CardMaterials", typeof(Material));
-		foreach (Material item in auxMaterialsCard) {
+		foreach (Material item in auxMaterialsCard)
+		{
 			materialsCardLine1.Add(item);
 		}
 		Object[] auxMaterialsDeck = Resources.LoadAll("DeckMaterials", typeof(Material));
-		foreach (Material item in auxMaterialsDeck) {
+		foreach (Material item in auxMaterialsDeck)
+		{
 			materialsDeck.Add(item);	
 		}
 		
-		do 
-		{
+		while (materialsCardLine1.Count > 6) {
 			int r = Random.Range(0, materialsCardLine1.Count);
 			materialsDeck.RemoveAt(r);
-			materialsCardLine1.RemoveAt(r);
-		} 
-		while (materialsCardLine1.Count > 6);
-		
+			materialsCardLine1.RemoveAt(r);			
+		}
+
 		// Copia das cartas da linha 1.
 		List<Material> materialsCardLine2 = materialsCardLine1;
 		
 		// SHUFFLE
-		materialsDeck = Shuffle(materialsDeck);
+		materialsDeck = Shuffle(materialsDeck);		
 		materialsCardLine1 = Shuffle(materialsCardLine1);
 		materialsCardLine2 = Shuffle(materialsCardLine2);
-		
+
 		// Posicionamento.
-		for (int i = 1; i < materialsDeck.Count + 1; i++) 
+		for (int i = 1; i < materialsDeck.Count+1; i++) 
 		{
-			GameObject newDeck = (GameObject)Instantiate(deckPrefab, new Vector3(marginLeft + index * i, 2.5f, 0f), Quaternion.identity);	
+			GameObject newDeck = (GameObject)Instantiate(deckPrefab, new Vector3(marginLeft + index * i, 1.8f, 0f), Quaternion.identity);	
 			newDeck.renderer.material = materialsDeck[i - 1];
 			newDeck.name = materialsDeck[i - 1].name;
+			newDeck.transform.Rotate(new Vector3(0f, 0f, 180f));
 		}
-
 		for (int i = 1; i < materialsCardLine1.Count + 1; i++) 
 		{
-			GameObject newCard = (GameObject)Instantiate(cardPrefab, new Vector3(marginLeft + index * i, .2f, 0f), Quaternion.identity);	
+			GameObject newCard = (GameObject)Instantiate(cardPrefab, new Vector3(marginLeft + index * i, -.2f, 0f), Quaternion.identity);	
 			newCard.renderer.material = materialsCardLine1[i - 1];
 			newCard.name = materialsCardLine1[i - 1].name;
 		}
 		for (int i = 1; i < materialsCardLine2.Count + 1; i++) 
 		{
-			GameObject newCard = (GameObject)Instantiate(cardPrefab, new Vector3(marginLeft + index * i, -1.4f, 0f), Quaternion.identity);	
+			GameObject newCard = (GameObject)Instantiate(cardPrefab, new Vector3(marginLeft + index * i, -1.8f, 0f), Quaternion.identity);	
 			newCard.renderer.material = materialsCardLine2[i - 1];
 			newCard.name = materialsCardLine2[i - 1].name;
 		}
@@ -147,22 +147,6 @@ public class ControlCard : MonoBehaviour
 			}
 		}
 	}
-	
-	public int randomCards()
-	{
-		bool generate = true;
-		int i = 0;
-		while (generate)
-		{
-			i = Random.Range(0,6);
-			if (rdn[i] < 2)
-			{
-				rdn[i]++;
-				generate = false;
-			}
-		}
-		return i;
-	}
-	
+
 	#endregion	
 }
