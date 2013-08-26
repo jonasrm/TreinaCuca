@@ -18,7 +18,7 @@ public class CardMove : MonoBehaviour
 	private bool overDeck = false;
 	
 	private Vector3 startPosition;
-	private float upEffect = 2f;
+	private float upEffect = 1f;
 	private float timeUpEffect = 1f;
 	private float timeRotate = 1f;
 		
@@ -29,7 +29,6 @@ public class CardMove : MonoBehaviour
 	void Start ()
 	{
 		startPosition = transform.position;
-		
 	}
 	
 	void Update()
@@ -43,6 +42,7 @@ public class CardMove : MonoBehaviour
 		{
 			if (stateCard == StateCard.FLIP && flipCard == FlipCard.BACK)
 			{
+				PlayFile("Sound/1");
 				flipping();
 			}
 			else if (stateCard == StateCard.DRAG_AND_DROP)
@@ -143,6 +143,17 @@ public class CardMove : MonoBehaviour
 	void setStateCardDragDrod()
 	{
 		stateCard = StateCard.DRAG_AND_DROP;
+	}
+	
+	#endregion
+	
+	#region Sound
+
+	public void PlayFile(string file) // file name without extension
+	{
+		AudioClip tmpClip;
+		tmpClip = (AudioClip)Resources.Load(file, typeof(AudioClip));
+		audio.PlayOneShot(tmpClip);
 	}
 	
 	#endregion

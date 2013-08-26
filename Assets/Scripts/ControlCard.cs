@@ -35,7 +35,7 @@ public class ControlCard : MonoBehaviour
 	void Start()
 	{
 		timer = START_TIMER;
-		float marginLeft = -4.2f, index = 1.2f, y;
+		float marginLeft = -4.2f, index = 1.2f;
 
 		Object[] auxMaterialsCard = Resources.LoadAll("CardMaterials", typeof(Material));
 		foreach (Material item in auxMaterialsCard) {
@@ -63,6 +63,13 @@ public class ControlCard : MonoBehaviour
 		materialsCardLine2 = Shuffle(materialsCardLine2);
 		
 		// Posicionamento.
+		for (int i = 1; i < materialsDeck.Count + 1; i++) 
+		{
+			GameObject newDeck = (GameObject)Instantiate(deckPrefab, new Vector3(marginLeft + index * i, 2.5f, 0f), Quaternion.identity);	
+			newDeck.renderer.material = materialsDeck[i - 1];
+			newDeck.name = materialsDeck[i - 1].name;
+		}
+
 		for (int i = 1; i < materialsCardLine1.Count + 1; i++) 
 		{
 			GameObject newCard = (GameObject)Instantiate(cardPrefab, new Vector3(marginLeft + index * i, .2f, 0f), Quaternion.identity);	
@@ -74,12 +81,6 @@ public class ControlCard : MonoBehaviour
 			GameObject newCard = (GameObject)Instantiate(cardPrefab, new Vector3(marginLeft + index * i, -1.4f, 0f), Quaternion.identity);	
 			newCard.renderer.material = materialsCardLine2[i - 1];
 			newCard.name = materialsCardLine2[i - 1].name;
-		}
-		for (int i = 1; i < materialsDeck.Count + 1; i++) 
-		{
-			GameObject newDeck = (GameObject)Instantiate(deckPrefab, new Vector3(marginLeft + index * i, 2.5f, 0f), Quaternion.identity);	
-			newDeck.renderer.material = materialsDeck[i - 1];
-			newDeck.name = materialsDeck[i - 1].name;
 		}
 	}
 	
@@ -151,7 +152,8 @@ public class ControlCard : MonoBehaviour
 	{
 		bool generate = true;
 		int i = 0;
-		while (generate) {
+		while (generate)
+		{
 			i = Random.Range(0,6);
 			if (rdn[i] < 2)
 			{
