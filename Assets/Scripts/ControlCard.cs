@@ -8,33 +8,28 @@ public enum StateGame { FREE, WAIT }
 public class ControlCard : MonoBehaviour
 {
 	#region Fields
-	
+
 	public static StateGame gameState = StateGame.FREE;
-	private const float START_TIMER = 1f;
-	private static float timer;
-	
 	public GameObject deckPrefab;
 	public GameObject cardPrefab;
 	public List<Material> materialsCardLine1;
-	public List<Material> materialsDeck;
-	
-	//public GameObject[] prefab;
+	public List<Material> materialsDeck;	
 	public static int flippedCards = 0;
 	public static GameObject card1, card2;
-	private int[] rdn = new int[] {0,0,0,0,0,0};
-	
+	private System.Random _random = new System.Random();
+	private float countdown; //UNDONE
+
 	#endregion
 	
 	#region Methods
 	
 	void OnGUI()
 	{
-		GUI.Label(new Rect(10, 10, 200, 50), "FP: " + flippedCards);	
+		GUI.Label(new Rect(10, 10, 200, 50), "FP: " + flippedCards);
 	}
 	
 	void Start()
 	{
-		timer = START_TIMER;
 		float marginLeft = -4.2f, index = 1.2f;
 
 		Object[] auxMaterialsCard = Resources.LoadAll("CardMaterials", typeof(Material));
@@ -63,30 +58,31 @@ public class ControlCard : MonoBehaviour
 		materialsCardLine2 = Shuffle(materialsCardLine2);
 
 		// Posicionamento.
-		for (int i = 1; i < materialsDeck.Count+1; i++) 
+		//TODO - melhorar o shuffle
+		for (int i = 1; i < materialsDeck.Count+1; i++)
 		{
 			GameObject newDeck = (GameObject)Instantiate(deckPrefab, new Vector3(marginLeft + index * i, 1.8f, 0f), Quaternion.identity);	
 			newDeck.renderer.material = materialsDeck[i - 1];
 			newDeck.name = materialsDeck[i - 1].name;
 			newDeck.transform.Rotate(new Vector3(0f, 0f, 180f));
 		}
-		for (int i = 1; i < materialsCardLine1.Count + 1; i++) 
+		for (int i = 1; i < materialsCardLine1.Count + 1; i++)
 		{
-			GameObject newCard = (GameObject)Instantiate(cardPrefab, new Vector3(marginLeft + index * i, -.2f, 0f), Quaternion.identity);	
+			GameObject newCard = (GameObject)Instantiate(cardPrefab, new Vector3(marginLeft + index * i, .0f, 0f), Quaternion.identity);	
 			newCard.renderer.material = materialsCardLine1[i - 1];
 			newCard.name = materialsCardLine1[i - 1].name;
 		}
-		for (int i = 1; i < materialsCardLine2.Count + 1; i++) 
+		for (int i = 1; i < materialsCardLine2.Count + 1; i++)
 		{
-			GameObject newCard = (GameObject)Instantiate(cardPrefab, new Vector3(marginLeft + index * i, -1.8f, 0f), Quaternion.identity);	
+			GameObject newCard = (GameObject)Instantiate(cardPrefab, new Vector3(marginLeft + index * i, -1.6f, 0f), Quaternion.identity);	
 			newCard.renderer.material = materialsCardLine2[i - 1];
 			newCard.name = materialsCardLine2[i - 1].name;
 		}
 	}
 	
-	private System.Random _random = new System.Random();
 	public List<Material> Shuffle(List<Material> arr)
     {
+		
 		List<KeyValuePair<int, Material>> list = new List<KeyValuePair<int, Material>>();
 		
 		foreach (Material s in arr)
@@ -114,19 +110,8 @@ public class ControlCard : MonoBehaviour
 	{
 		if (Input.GetKeyDown(KeyCode.Escape))
 		{
-			Application.LoadLevel("Menu");
-		}
-		
-		if (gameState == StateGame.WAIT)
-		{
-			timer -= Time.deltaTime;
-			if (timer <= 0f)
-			{
-				gameState = StateGame.FREE;
-				flippedCards = 0;
-				timer = START_TIMER;
-			}
-		}
+			AutoFade.LoadLevel("Menu", 1f, 1f, Color.black);
+		}		
 	}
 	
 	public static void cardFlip()

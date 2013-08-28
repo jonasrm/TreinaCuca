@@ -2,25 +2,22 @@
 using System.Collections;
 
 public enum FlipCard { FRONT, BACK }
-public enum StateCard { FLIP, DRAG_AND_DROP, BLOCK }
+public enum StateCard { FLIP, DRAG_AND_DROP, DRAGGED, BLOCK }
 
 public class CardMove : MonoBehaviour
 {
 	#region Fields
-		
-	public AudioClip clip1;
-	
+
+	public AudioClip audioClick, audioFlip, audioMove, audioError, audioPow;
 	public FlipCard flipCard = FlipCard.BACK;
 	public StateCard stateCard = StateCard.FLIP;
-
 	private Vector3 screenPoint;
     private Vector3 offset;
 	private bool overDeck = false;
-	
 	private Vector3 startPosition;
-	private float upEffect = 1f;
-	private float timeUpEffect = 1f;
-	private float timeRotate = 1f;
+	private float upEffect = .5f;
+	private float timeUpEffect = .2f;
+	private float timeRotate = .5f;
 		
 	#endregion
 	
@@ -37,14 +34,14 @@ public class CardMove : MonoBehaviour
 		{
 			if (stateCard == StateCard.FLIP && flipCard == FlipCard.BACK)
 			{
-				//PlayFile("Sound/1");
-				audio.PlayOneShot(clip1);
+				iTween.Stab(gameObject, audioClick, 0);
 				flipping();
 			}
 			else if (stateCard == StateCard.DRAG_AND_DROP)
 			{
 				screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
 				offset = transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z));
+				stateCard = StateCard.DRAGGED;
 			}
 			
 		}
@@ -52,7 +49,7 @@ public class CardMove : MonoBehaviour
 	
 	void OnMouseDrag()
 	{
-		if (stateCard == StateCard.DRAG_AND_DROP)
+		if (stateCard == StateCard.DRAGGED)
 		{
 			Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z-upEffect);
 			Vector3 curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint) + offset;
@@ -62,7 +59,7 @@ public class CardMove : MonoBehaviour
 	
 	void OnMouseUp() 
 	{
-		if (stateCard == StateCard.DRAG_AND_DROP)
+		if (stateCard == StateCard.DRAGGED)
 		{
 			if (overDeck)
 			{
@@ -85,23 +82,32 @@ public class CardMove : MonoBehaviour
 			flipCard = FlipCard.FRONT;
 			if (ControlCard.flippedCards == 1)
 			{
-				ControlCard.card1 = gameObject;
+				ControlCard.card1 = gameObject;				
+				
 				iTween.MoveBy(gameObject, iTween.Hash("z", -upEffect, "time", timeUpEffect));
+				
 				iTween.RotateBy(gameObject, iTween.Hash("y", .5, "time", timeRotate, "easeType", "easeInOutBack", "delay", timeUpEffect));
 			}
 			else if (ControlCard.flippedCards == 2)
 			{
 				ControlCard.card2 = gameObject;
+				
 				iTween.MoveBy(gameObject, iTween.Hash("z", -upEffect, "time", timeUpEffect));
+				
 				iTween.RotateBy(gameObject, iTween.Hash("y", .5, "time", timeRotate, "easeType", "easeInOutBack", "delay", timeUpEffect, "onComplete", "setStateCardFlip"));
 			}
 		}
 		else
 		{
 			flipCard = FlipCard.BACK;
+			
 			iTween.MoveBy(gameObject, iTween.Hash("z", -upEffect, "time", timeUpEffect));
+
 			iTween.RotateBy(gameObject, iTween.Hash("y", -.5, "time", timeRotate/2, "easeType", "easeInOutBack", "delay", timeUpEffect, "onComplete", "setStateCardFlip"));
-			iTween.ShakePosition(gameObject, iTween.Hash("y", .1f, "x", .1f, "z", .1f, "time", .1f, "delay", timeUpEffect));
+			
+			iTween.Stab(gameObject, audioError, timeUpEffect);
+			iTween.ShakePosition(gameObject, iTween.Hash("y", .1f, "x", .1f, "z", .1f, "time", .1f, "delay", timeUpEffect, "onComplete", "setGameStateFree"));
+			
 		}
 	}
 	
@@ -112,8 +118,14 @@ public class CardMove : MonoBehaviour
 		y = c.transform.position.y - transform.position.y;		
 		iTween.MoveBy(c, iTween.Hash("z", -upEffect, "time", timeUpEffect));
 		iTween.MoveBy(gameObject, iTween.Hash("z", -upEffect, "time", timeUpEffect));
-		iTween.MoveBy(gameObject, iTween.Hash("x", x, "y", y, "easeType", "easeInOutExpo", "delay", timeUpEffect, "onComplete", "selfDestruction"));
-		iTween.ShakePosition(Camera.main.gameObject, iTween.Hash("y", .1f, "x", .1f, "z", .1f, "time", .5f, "delay", timeUpEffect*2));
+		
+		iTween.Stab(gameObject, audioMove, timeUpEffect);
+		iTween.MoveBy(gameObject, iTween.Hash("x", x, "y", y, "easeType", "easeInOutExpo", "time", timeUpEffect, "delay", timeUpEffect, "onComplete", "selfDestruction"));
+		
+		//TODO - o gameObject morre...
+		//iTween.Stab(gameObject, audioPow, timeUpEffect*2); //UNDONE
+		iTween.ShakePosition(Camera.main.gameObject, iTween.Hash("y", .1f, "x", .1f, "z", .1f, "time", .5f, "delay", (timeUpEffect+timeUpEffect), "onComplete", "setGameStateFree"));
+		
 	}
 	
 	public void moveTo(Vector3 pos)
@@ -121,13 +133,25 @@ public class CardMove : MonoBehaviour
 		float x, y;
 		x = transform.position.x - pos.x;
 		y = pos.y - transform.position.y;
-		iTween.MoveBy(gameObject, iTween.Hash("x", x, "y", y, "z", -upEffect, "easeType", "easeInOutExpo", "delay", .1));
+		
+		iTween.MoveBy(gameObject, iTween.Hash("x", x, "y", y, "z", -upEffect, "easeType", "easeInOutExpo", "delay", .1, "onComplete", "setStateCardDragAndDrop"));
+	}
+	
+	void setGameStateFree()
+	{
+		ControlCard.gameState = StateGame.FREE;
+		ControlCard.flippedCards = 0;		
 	}
 	
 	void selfDestruction()
 	{
 		ControlCard.flippedCards = 0;
 		Destroy(gameObject);
+	}
+	
+	void setStateCardDragAndDrop()
+	{
+		stateCard = StateCard.DRAG_AND_DROP;
 	}
 	
 	void setStateCardFlip()
@@ -140,17 +164,6 @@ public class CardMove : MonoBehaviour
 	{
 		stateCard = StateCard.DRAG_AND_DROP;
 	}
-	
-	#endregion
-	
-	#region Sound
-
-	//public void PlayFile(string file) // file name without extension
-	//{
-		//AudioClip tmpClip;
-		//tmpClip = (AudioClip)Resources.Load(file, typeof(AudioClip));
-		//audio.PlayOneShot(tmpClip);
-	//}
 	
 	#endregion
 	
