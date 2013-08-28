@@ -10,7 +10,6 @@ public class Menu : MonoBehaviour {
 	private float posicaoX, posicaoY;	
 	public GUIStyle style1;
 	public GUIStyle style2;
-	private bool fadeOutSound = false;
 	
 	#endregion
 	
@@ -20,8 +19,6 @@ public class Menu : MonoBehaviour {
 	void Start () {
 		posicaoX = Screen.width/2;
 		posicaoY = Screen.height/2;
-		audio.Play();
-		audio.volume = 0f;
 	}
 	
 	// OnGUI
@@ -29,10 +26,9 @@ public class Menu : MonoBehaviour {
 		//Debug.Log(style1.normal.background.width);
 		//Debug.Log(style1.normal.background.height);
 		if(GUI.Button(new Rect(70, 260, 245, 75), "", style1)){
-			fadeOutSound = true;
+			//fadeOutSound = true;
 			audio.PlayOneShot(sound_click);
 			AutoFade.LoadLevel("PlayGame", 1f, 1f, Color.black);
-			//Application.LoadLevel("PlayGame");
 		}
 		if(GUI.Button(new Rect(70, 340, 245, 75), "", style2)){
 			audio.PlayOneShot(sound_click);
@@ -41,25 +37,7 @@ public class Menu : MonoBehaviour {
 	}
 	
 	void Update()
-	{
-		if(fadeOutSound)
-		{
-			audio.volume -= Time.deltaTime * 1f;
-		}
-		else
-		{
-			if (audio.volume >= 1f)
-			{
-				audio.volume = 1f;
-				Debug.Log(audio.volume);
-			}
-			else
-			{
-				audio.volume += Time.deltaTime * 0.5f;
-				Debug.Log(audio.volume);
-			}
-		}
-		
+	{		
 		if (Input.GetKeyDown(KeyCode.Escape))
 		{
 			Application.Quit();
