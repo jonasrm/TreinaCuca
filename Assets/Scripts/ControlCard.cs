@@ -9,6 +9,7 @@ public class ControlCard : MonoBehaviour
 {
 	#region Fields
 
+	public static int countCardFinished = 0;
 	public static StateGame gameState = StateGame.FREE;
 	public GameObject deckPrefab;
 	public GameObject cardPrefab;
@@ -18,7 +19,7 @@ public class ControlCard : MonoBehaviour
 	public static int flippedCards = 0;
 	public static GameObject card1, card2;
 	private System.Random _random = new System.Random();
-	private float countdown = 100; //UNDONE
+	private float countdown = 100;
 
 	#endregion
 	
@@ -112,6 +113,11 @@ public class ControlCard : MonoBehaviour
 	{
 		countdown -= Time.deltaTime;
 		progress_bar.transform.position -=  new Vector3(0, Time.deltaTime/countdown, 0);
+		if (progress_bar.transform.position.y <= -1.4)
+		{
+			Debug.Log ("FINISH");
+			AutoFade.LoadLevel("Menu", 1f, 1f, Color.red);
+		}
 
 		//Back to menu
 		if (Input.GetKeyDown(KeyCode.Escape))
