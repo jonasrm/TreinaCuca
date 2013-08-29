@@ -63,8 +63,13 @@ public class CardMove : MonoBehaviour
 		{
 			if (overDeck)
 			{
+				GameObject go = CreateSound(audioError);
+				Destroy(go, audioError.length);
+				
 				//TODO - o elemento morre...
 				iTween.Stab(gameObject, audioError, timeUpEffect);
+				ControlCard.countCardFinished++;
+				
 				Destroy(gameObject);
 			}
 			else
@@ -72,6 +77,23 @@ public class CardMove : MonoBehaviour
 				moveTo(startPosition);
 			}
 		}
+	}
+
+	GameObject CreateSound (AudioClip audioError)
+	{
+		GameObject go = new GameObject("Sound");
+		go.AddComponent<AudioSource>();
+		
+		Instantiate(go, Vector3.zero, Quaternion.identity);
+		
+		AudioSource audio = go.GetComponent<AudioSource>();
+		audio.clip = audioError;
+		audio.name = "TESTE";
+		audio.loop = false;
+		audio.playOnAwake = false;
+		audio.Play();
+		
+		return go;
 	}
 	
 	public void flipping()

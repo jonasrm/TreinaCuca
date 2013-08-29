@@ -4,12 +4,19 @@ using System.Collections;
 
 public class AutoFade : MonoBehaviour
 {
+	
+	#region Fields
+	
     private static AutoFade m_Instance = null;
     private Material m_Material = null;
     private string m_LevelName = "";
     private int m_LevelIndex = 0;
     private bool m_Fading = false;
-
+	
+	#endregion
+	
+	#region Methods
+	
     private static AutoFade Instance
     {
         get
@@ -92,4 +99,7 @@ public class AutoFade : MonoBehaviour
         Instance.m_LevelIndex = aLevelIndex;
         Instance.StartFade(aFadeOutTime, aFadeInTime, aColor);
     }
+
+	#endregion
+
 }

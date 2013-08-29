@@ -9,6 +9,7 @@ public class ControlCard : MonoBehaviour
 {
 	#region Fields
 
+	public GUISkin skin;
 	public static int countCardFinished = 0;
 	public static StateGame gameState = StateGame.FREE;
 	public GameObject deckPrefab;
@@ -20,6 +21,9 @@ public class ControlCard : MonoBehaviour
 	public static GameObject card1, card2;
 	private System.Random _random = new System.Random();
 	private float countdown = 100;
+	private float positionX, positionY;
+	private string popupText = "";
+	private Vector3 posProgressBar;
 
 	#endregion
 	
@@ -27,12 +31,42 @@ public class ControlCard : MonoBehaviour
 	
 	void OnGUI()
 	{
-		GUI.Label(new Rect(10, 10, 200, 50), "FP: " + flippedCards);
+		if (gameState == StateGame.WAIT)
+		{
+			Time.timeScale = 0;
+			int w = 300, h = 100;
+			GUI.skin = skin;
+			GUI.Box(new Rect(positionX - w/2, positionY - h/2 - 50, w, h), popupText);
+			if (GUI.Button(new Rect(positionX - w/2, positionY - h/2 + 60, w/2 - 10, h-30), "Reiniciar"))
+			{
+				Time.timeScale = 1;
+				gameState = StateGame.FREE;
+				AutoFade.LoadLevel("PlayGame", 1f, 1f, Color.black);
+			}
+			if (GUI.Button(new Rect(positionX - w/2 + w/2 + 10, positionY - h/2 + 60, w/2 -10, h-30), "Menu"))
+			{
+				Time.timeScale = 1;
+				gameState = StateGame.FREE;
+				AutoFade.LoadLevel("Menu", 1f, 1f, Color.black);
+			}
+		}
+	}
+	
+	void Awake()
+	{
+		positionX = Screen.width / 2;
+		positionY = Screen.height / 2;
+		countdown = 100;
+		countCardFinished = 0;
+		flippedCards = 0;
+		gameState = StateGame.FREE;
+		card1 = null;
+		card2 = null;
+		posProgressBar = progress_bar.transform.position;
 	}
 	
 	void Start()
 	{
-
 		Object[] auxMaterialsCard = Resources.LoadAll("CardMaterials", typeof(Material));
 		foreach (Material item in auxMaterialsCard)
 		{
@@ -113,16 +147,37 @@ public class ControlCard : MonoBehaviour
 	{
 		countdown -= Time.deltaTime;
 		progress_bar.transform.position -=  new Vector3(0, Time.deltaTime/countdown, 0);
-		if (progress_bar.transform.position.y <= -1.4)
+		
+		//Finish Game
+		if (progress_bar.transform.position.y <= -1)
 		{
-			Debug.Log ("FINISH");
-			AutoFade.LoadLevel("Menu", 1f, 1f, Color.red);
+			progress_bar.transform.position = posProgressBar;
+			popupText = "Derrota";
+			Time.timeScale = 0;
+			gameState = StateGame.WAIT;
+		}
+		else if (countCardFinished >= 6)
+		{
+			popupText = "Vitoria";
+			Time.timeScale = 0;
+			gameState = StateGame.WAIT;
 		}
 
 		//Back to menu
 		if (Input.GetKeyDown(KeyCode.Escape))
 		{
-			AutoFade.LoadLevel("Menu", 1f, 1f, Color.black);
+			//AutoFade.LoadLevel("Menu", 1f, 1f, Color.black);
+			if (gameState == StateGame.FREE)
+			{
+				popupText = "Pausa";
+				Time.timeScale = 0;
+				gameState = StateGame.WAIT;
+			}
+			else
+			{
+				Time.timeScale = 1;
+				gameState = StateGame.FREE;
+			}
 		}		
 	}
 	
@@ -130,8 +185,6 @@ public class ControlCard : MonoBehaviour
 	{
 		if (flippedCards == 2)
 		{
-			gameState = StateGame.WAIT;
-			
 			if ( card1.name == card2.name )
 			{
 				card1.GetComponent<CardMove>().moveFrom(card2);

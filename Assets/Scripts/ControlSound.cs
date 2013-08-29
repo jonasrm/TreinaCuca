@@ -3,12 +3,19 @@ using System.Collections;
 
 public class ControlSound : MonoBehaviour {
 	
+	#region Fields
+	
 	public Material materialSoundOn, materialSoundOff;
 	private bool soundOn = true;
-	private AudioSource audioBackground;
+	
+	#endregion
+	
+	#region Methods
 	
 	// Use this for initialization
 	void Start () {
+		audio.Play();
+		audio.volume = 0f;	
 		gameObject.renderer.material = materialSoundOn;
 		soundOn = true;
 	}
@@ -19,20 +26,28 @@ public class ControlSound : MonoBehaviour {
 		{
 			soundOn = false;
 			gameObject.renderer.material = materialSoundOff;
-			//audioBackground = GameObject.Find("Background").transform.GetComponent(AudioSource);
-			//audioBackground = GameObject.Find("Background").GetComponent(AudioSource);
-			//audioBackground.Stop();
+			audio.Stop();
 		}
 		else
 		{
 			soundOn = true;
 			gameObject.renderer.material = materialSoundOn;	
-			audioBackground.Play();
+			audio.Play();
 		}
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	
+		if (audio.volume >= 1f)
+		{
+			audio.volume = 1f;
+		}
+		else
+		{
+			audio.volume += Time.deltaTime * 0.5f;
+		}
 	}
+
+	#endregion
+	
 }
