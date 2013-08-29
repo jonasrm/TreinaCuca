@@ -12,12 +12,13 @@ public class ControlCard : MonoBehaviour
 	public static StateGame gameState = StateGame.FREE;
 	public GameObject deckPrefab;
 	public GameObject cardPrefab;
+	public GameObject progress_bar;
 	public List<Material> materialsCardLine1;
 	public List<Material> materialsDeck;	
 	public static int flippedCards = 0;
 	public static GameObject card1, card2;
 	private System.Random _random = new System.Random();
-	private float countdown; //UNDONE
+	private float countdown = 100; //UNDONE
 
 	#endregion
 	
@@ -30,7 +31,6 @@ public class ControlCard : MonoBehaviour
 	
 	void Start()
 	{
-		float marginLeft = -4.2f, index = 1.2f;
 
 		Object[] auxMaterialsCard = Resources.LoadAll("CardMaterials", typeof(Material));
 		foreach (Material item in auxMaterialsCard)
@@ -59,22 +59,24 @@ public class ControlCard : MonoBehaviour
 
 		// Posicionamento.
 		//TODO - melhorar o shuffle
+		float marginLeft = -4.7f, index = 1.25f;
+		
 		for (int i = 1; i < materialsDeck.Count+1; i++)
 		{
-			GameObject newDeck = (GameObject)Instantiate(deckPrefab, new Vector3(marginLeft + index * i, 1.8f, 0f), Quaternion.identity);	
+			GameObject newDeck = (GameObject)Instantiate(deckPrefab, new Vector3(marginLeft + index * i, 1.6f, 0f), Quaternion.identity);	
 			newDeck.renderer.material = materialsDeck[i - 1];
 			newDeck.name = materialsDeck[i - 1].name;
 			newDeck.transform.Rotate(new Vector3(0f, 0f, 180f));
 		}
 		for (int i = 1; i < materialsCardLine1.Count + 1; i++)
 		{
-			GameObject newCard = (GameObject)Instantiate(cardPrefab, new Vector3(marginLeft + index * i, .0f, 0f), Quaternion.identity);	
+			GameObject newCard = (GameObject)Instantiate(cardPrefab, new Vector3(marginLeft + index * i, -.1f, 0f), Quaternion.identity);	
 			newCard.renderer.material = materialsCardLine1[i - 1];
 			newCard.name = materialsCardLine1[i - 1].name;
 		}
 		for (int i = 1; i < materialsCardLine2.Count + 1; i++)
 		{
-			GameObject newCard = (GameObject)Instantiate(cardPrefab, new Vector3(marginLeft + index * i, -1.6f, 0f), Quaternion.identity);	
+			GameObject newCard = (GameObject)Instantiate(cardPrefab, new Vector3(marginLeft + index * i, -1.7f, 0f), Quaternion.identity);	
 			newCard.renderer.material = materialsCardLine2[i - 1];
 			newCard.name = materialsCardLine2[i - 1].name;
 		}
@@ -108,6 +110,10 @@ public class ControlCard : MonoBehaviour
 	
 	void Update()
 	{
+		countdown -= Time.deltaTime;
+		progress_bar.transform.position -=  new Vector3(0, Time.deltaTime/countdown, 0);
+
+		//Back to menu
 		if (Input.GetKeyDown(KeyCode.Escape))
 		{
 			AutoFade.LoadLevel("Menu", 1f, 1f, Color.black);
@@ -123,7 +129,7 @@ public class ControlCard : MonoBehaviour
 			if ( card1.name == card2.name )
 			{
 				card1.GetComponent<CardMove>().moveFrom(card2);
-				card2.GetComponent<CardMove>().stateCard = StateCard.DRAG_AND_DROP;
+				card1.GetComponent<CardMove>().stateCard = StateCard.DRAG_AND_DROP;
 			}
 			else
 			{

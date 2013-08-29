@@ -63,6 +63,8 @@ public class CardMove : MonoBehaviour
 		{
 			if (overDeck)
 			{
+				//TODO - o elemento morre...
+				iTween.Stab(gameObject, audioError, timeUpEffect);
 				Destroy(gameObject);
 			}
 			else
@@ -113,19 +115,21 @@ public class CardMove : MonoBehaviour
 	
 	public void moveFrom(GameObject c)
 	{
-		float x, y;
-		x = transform.position.x - c.transform.position.x;
-		y = c.transform.position.y - transform.position.y;		
+		float x, y;		
+		x = c.transform.position.x - transform.position.x;
+		y = transform.position.y - c.transform.position.y;		
+		
+		//Up two cards
 		iTween.MoveBy(c, iTween.Hash("z", -upEffect, "time", timeUpEffect));
 		iTween.MoveBy(gameObject, iTween.Hash("z", -upEffect, "time", timeUpEffect));
 		
+		//Move card and play sound
 		iTween.Stab(gameObject, audioMove, timeUpEffect);
-		iTween.MoveBy(gameObject, iTween.Hash("x", x, "y", y, "easeType", "easeInOutExpo", "time", timeUpEffect, "delay", timeUpEffect, "onComplete", "selfDestruction"));
+		iTween.MoveBy(c, iTween.Hash("x", x, "y", y, "easeType", "easeInOutExpo", "time", timeUpEffect, "delay", timeUpEffect, "onComplete", "selfDestruction", "onCompleteParams", c));
 		
-		//TODO - o gameObject morre...
-		//iTween.Stab(gameObject, audioPow, timeUpEffect*2); //UNDONE
+		iTween.Stab(gameObject, audioPow, timeUpEffect*2); //UNDONE
 		iTween.ShakePosition(Camera.main.gameObject, iTween.Hash("y", .1f, "x", .1f, "z", .1f, "time", .5f, "delay", (timeUpEffect+timeUpEffect), "onComplete", "setGameStateFree"));
-		
+
 	}
 	
 	public void moveTo(Vector3 pos)
@@ -143,10 +147,10 @@ public class CardMove : MonoBehaviour
 		ControlCard.flippedCards = 0;		
 	}
 	
-	void selfDestruction()
+	void selfDestruction(GameObject o)
 	{
 		ControlCard.flippedCards = 0;
-		Destroy(gameObject);
+		Destroy(o);
 	}
 	
 	void setStateCardDragAndDrop()
