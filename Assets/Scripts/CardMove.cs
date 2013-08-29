@@ -63,17 +63,19 @@ public class CardMove : MonoBehaviour
 		{
 			if (overDeck)
 			{
-				GameObject go = CreateSound(audioError);
-				Destroy(go, audioError.length);
+				GameObject go = CreateSound(audioPow);
+				Destroy(go, audioPow.length);
 				
 				//TODO - o elemento morre...
-				iTween.Stab(gameObject, audioError, timeUpEffect);
+				//iTween.Stab(gameObject, audioError, timeUpEffect);
 				ControlCard.countCardFinished++;
 				
 				Destroy(gameObject);
 			}
 			else
 			{
+				iTween.Stab(gameObject, audioError, timeUpEffect);
+				
 				moveTo(startPosition);
 			}
 		}
