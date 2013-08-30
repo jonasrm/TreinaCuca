@@ -8,8 +8,9 @@ public enum StateGame { FREE, WAIT }
 public class ControlCard : MonoBehaviour
 {
 	#region Fields
-
+	
 	public GUISkin skin;
+	public AudioClip audioWin, audioLose, audioPause;
 	public static int countCardFinished = 0;
 	public static StateGame gameState = StateGame.FREE;
 	public GameObject deckPrefab;
@@ -22,7 +23,7 @@ public class ControlCard : MonoBehaviour
 	public static GameObject card1, card2;
 	private System.Random _random = new System.Random();
 	private float countdown;
-	private const float START_COUNTDOWN = 10;
+	private const float START_COUNTDOWN = 100;
 	private float positionX, positionY;
 	private string popupText = "";
 
@@ -44,11 +45,13 @@ public class ControlCard : MonoBehaviour
 			
 			if (GUI.Button(new Rect(positionX - w/2, positionY - h/2 + 60, w/2 - 10, h-30), "Reiniciar"))
 			{
+				iTween.Stab(gameObject, audioPause, 0);
 				ManagerLevel.LoadPlayGame();
 				enabled = false;
 			}
 			if (GUI.Button(new Rect(positionX - w/2 + w/2 + 10, positionY - h/2 + 60, w/2 -10, h-30), "Menu"))
 			{
+				iTween.Stab(gameObject, audioPause, 0);
 				ManagerLevel.LoadMenu();
 				enabled = false;
 			}		
@@ -158,36 +161,50 @@ public class ControlCard : MonoBehaviour
 		float deadLine = -1.1f;
 		
 		//Finish Game
-		if (progress_bar.transform.position.y <= deadLine)
+		if (gameState != StateGame.WAIT)
 		{
-			//progress_bar.transform.position = posProgressBar;
-			popupText = "Derrota";
-			Time.timeScale = 0;
-			gameState = StateGame.WAIT;
-		}
-		else if (countCardFinished >= 6)
-		{
-			popupText = "Vitoria";
-			Time.timeScale = 0;
-			gameState = StateGame.WAIT;
+			if (progress_bar.transform.position.y <= deadLine)
+			{
+				GameObject go = CreateSound(audioLose);
+				Destroy(go, audioLose.length);				
+	
+				popupText = "Derrota";
+				Time.timeScale = 0;
+				gameState = StateGame.WAIT;
+			}
+			else if (countCardFinished >= 6)
+			{
+				GameObject go = CreateSound(audioWin);
+				Destroy(go, audioWin.length);				
+	
+				popupText = "Vitoria";
+				Time.timeScale = 0;
+				gameState = StateGame.WAIT;
+			}
 		}
 
 		//Back to menu
-//		if (Input.GetKeyDown(KeyCode.Escape))
-//		{
-//			//AutoFade.LoadLevel("Menu", 1f, 1f, Color.black);
-//			if (gameState == StateGame.FREE)
-//			{
-//				popupText = "Pausado";
-//				Time.timeScale = 0;
-//				gameState = StateGame.WAIT;
-//			}
-//			else
-//			{
-//				Time.timeScale = 1;
-//				gameState = StateGame.FREE;
-//			}
-//		}		
+		if (Input.GetKeyDown(KeyCode.Escape))
+		{
+			//AutoFade.LoadLevel("Menu", 1f, 1f, Color.black);
+			if (gameState == StateGame.FREE)
+			{
+				GameObject go = CreateSound(audioPause);
+				Destroy(go, audioPause.length);				
+
+				popupText = "Pausado";
+				Time.timeScale = 0;
+				gameState = StateGame.WAIT;
+			}
+			else
+			{
+				GameObject go = CreateSound(audioPause);
+				Destroy(go, audioPause.length);				
+
+				Time.timeScale = 1;
+				gameState = StateGame.FREE;
+			}
+		}		
 		
 		if (progress_bar.transform.position.y <= -0.8)
 		{
@@ -219,6 +236,21 @@ public class ControlCard : MonoBehaviour
 			}
 		}
 	}
-
+	
+	GameObject CreateSound (AudioClip audioError)
+	{
+		GameObject go = new GameObject("Sound");
+		go.AddComponent<AudioSource>();
+		Instantiate(go, Vector3.zero, Quaternion.identity);
+		
+		AudioSource audio = go.GetComponent<AudioSource>();
+		audio.clip = audioError;
+		audio.loop = false;
+		audio.playOnAwake = false;
+		audio.Play();
+		return go;
+	}
+	
+	
 	#endregion	
 }

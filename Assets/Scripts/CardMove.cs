@@ -64,18 +64,13 @@ public class CardMove : MonoBehaviour
 			if (overDeck)
 			{
 				GameObject go = CreateSound(audioPow);
-				Destroy(go, audioPow.length);
-				
-				//TODO - o elemento morre...
-				//iTween.Stab(gameObject, audioError, timeUpEffect);
+				Destroy(go, audioPow.length);				
 				ControlCard.countCardFinished++;
-				
 				Destroy(gameObject);
 			}
 			else
 			{
 				iTween.Stab(gameObject, audioError, timeUpEffect);
-				
 				moveTo(startPosition);
 			}
 		}
@@ -85,16 +80,13 @@ public class CardMove : MonoBehaviour
 	{
 		GameObject go = new GameObject("Sound");
 		go.AddComponent<AudioSource>();
-		
 		Instantiate(go, Vector3.zero, Quaternion.identity);
 		
 		AudioSource audio = go.GetComponent<AudioSource>();
 		audio.clip = audioError;
-		audio.name = "TESTE";
 		audio.loop = false;
 		audio.playOnAwake = false;
 		audio.Play();
-		
 		return go;
 	}
 	
